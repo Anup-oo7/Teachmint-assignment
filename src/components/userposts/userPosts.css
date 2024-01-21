@@ -1,0 +1,127 @@
+.dropdown-menu{
+    max-height: 300px; 
+    overflow-y: auto;
+}
+
+
+.posts{
+    height: 17em;
+    text-align: center;
+    margin: 25px;
+    flex-wrap: wrap;
+    overflow: hidden;
+    &:hover{
+        cursor: pointer;
+    }
+    
+    
+}
+.userDetails{
+    display: flex;
+    justify-content: space-between;
+}
+.sectionOne{
+    margin: 20px 0px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+   
+}
+.rightItems{
+    
+    display:flex;
+    flex-direction: row;
+    justify-content: flex-end;
+   align-items: center;
+  
+    
+}
+
+.clock{
+    margin: 5px 20px;
+    padding: 6px 12px;
+    background-color:#0f2027;
+    width: 100px;
+    color: beige;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+}
+.back{
+
+    width: 50px;
+    border: 1px solid;
+    border-radius: 5px;
+    text-decoration: none;
+    padding: 2px;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+    background-color: rgb(80, 166, 236);
+   
+}
+.pause{
+    padding: 6px 12px;
+    width: 80px;
+    border-radius: 5px;
+    background-color:#b6d7a8;
+}
+ .sectionOne a{
+    color: black;
+}
+
+.sectionTwo{
+    margin-bottom: 20px;
+}
+
+@media (min-width:300px) and (max-width:600px){
+    .sectionOne{
+        display: flex;
+        flex-direction: column;
+    }
+    .rightItems{
+        display: flex;
+        align-items: flex-start;
+        flex-direction: column; 
+        
+        
+    }
+    .pause{
+        width: 100px;
+    }
+    .clock{
+        margin: 5px 0px;
+    }
+    .userDetails{
+        display: flex;
+        flex-direction: column;
+    }
+}
+@media (min-width:601px) and (max-width:776px){
+    .sectionOne{
+        display: flex;
+        flex-direction: column;
+    }
+    /* .rightItems{
+        display: flex;
+        flex-direction: row; 
+       
+    } */
+    .pause{
+        width: 100px;
+    }
+    .clock{
+        margin: 5px 0px;
+    }
+    .userDetails{
+        display: flex;
+        flex-direction: column;
+    }
+}
+@media  (min-width:768px) and (max-width:1200px)  {
+   
+    
+}

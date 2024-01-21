@@ -1,0 +1,38 @@
+h2{
+    text-align: center;
+}
+
+.cards{
+    background-color: rgb(55, 143, 231);
+    border: 1px solid;
+    padding: 12px;
+    margin: 12px 50px;
+    border-radius: 10px;
+    &:hover{
+        cursor: pointer;
+        background-color: rgb(62, 191, 241);
+    }
+    &:active{
+        padding: 10px;
+    }
+    
+}
+.cardsContent{
+    font-size: larger;
+    font-weight: 600;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+a{
+    text-decoration: none;
+    color: black;
+}
+
+
+@media (min-width:300px) and (max-width:400px){
+    .cardsContent{
+        display: flex;
+        flex-direction: column;
+    }
+}
