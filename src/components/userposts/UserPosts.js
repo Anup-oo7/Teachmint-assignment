@@ -2,61 +2,93 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import "./userPosts.css";
 import { Link } from "react-router-dom";
-import PostPopup from './PostPopup'
+import PostPopup from "./PostPopup";
 
 function UserDetail() {
   const [userPosts, setUserPosts] = useState([]);
   const [userdetails, setuserDetails] = useState("");
   const [countries, setCountries] = useState([]);
   const [selectedCountry, setSelectedCountry] = useState("");
-  const [timeZoneByIp, settimeZoneByIp] = useState()
-  const [time, setTime] = useState('');
+  const [time, setTime] = useState("");
   const [intervalId, setIntervalId] = useState(null);
-  const [isPaused, setIsPaused] = useState(false);
-  // const [pauseTimestamp, setPauseTimestamp] = useState(null);
-  // const [lastFetchedTime, setLastFetchedTime] = useState("");
   const { id } = useParams();
   const [showPopup, setShowPopup] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
+  const [second, setSecond] = useState("00");
+  const [minute, setMinute] = useState("00");
+  const [hour, setHour] = useState("00");
+  const [isActive, setIsActive] = useState(true);
+  const [counter, setCounter] = useState(0);
+  const [selectedCountryTime, setSelectedCountryTime] = useState("");
 
-  useEffect((country) => {
-    startInterval(country)
-    fetchTimeZoneByIP()
-    fetchCountries();
-    fetchUserDetails();
-    fetchUserPosts();
-  }, [id]);
+  useEffect(() => {
+    let intervalId;
 
+    if (isActive) {
+      intervalId = setInterval(() => {
+        const secondCounter = counter % 60;
+        const minuteCounter = Math.floor(counter / 60);
+        const hourCounter = Math.floor(minuteCounter / 60);
 
-  //////////////////////////////////////////-------INITIAL TIME--------/////////////
-  
-  const fetchTimeZoneByIP = async () => {
-    try {
-      // Fetch user's IP address
-      const ipResponse = await fetch('https://api64.ipify.org?format=json');
-      const ipData = await ipResponse.json();
-      const userIP = ipData.ip;
-  
-      // Fetch timezone based on user's IP
-      const response = await fetch(`http://worldtimeapi.org/api/ip/${userIP}`);
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-  
-      const data = await response.json();
-      const regex = /T(\d{2}:\d{2}:\d{2})/;
-      const match = data.datetime.match(regex);
-      const extractedTime = match ? match[1] : "";
-  
-      settimeZoneByIp(extractedTime);
-      // console.log(time)
-    } catch (error) {
-      console.error("Error fetching time by IP:", error.message);
+        const computedSecond =
+          String(secondCounter).length === 1
+            ? `0${secondCounter}`
+            : secondCounter;
+        const computedMinute =
+          String(minuteCounter % 60).length === 1
+            ? `0${minuteCounter % 60}`
+            : minuteCounter % 60;
+        const computedHour =
+          String(hourCounter).length === 1 ? `0${hourCounter}` : hourCounter;
+
+        setSecond(computedSecond);
+        setMinute(computedMinute);
+        setHour(computedHour);
+
+        setCounter((counter) => counter + 1);
+        setTime(`${computedHour}:${computedMinute}:${computedSecond}`);
+      }, 1000);
     }
-  };
 
-  //////////////////////////////////////////-------COUNTRIES LIST--------/////////////
+    return () => clearInterval(intervalId);
+  }, [isActive, counter]);
+
+  useEffect(
+    (country) => {
+      startInterval(country);
+      fetchCountries();
+      fetchUserDetails();
+      fetchUserPosts();
+    },
+    [id]
+  );
+
+  // const fetchTimeZoneByIP = async () => {
+  //   try {
+  //     // Fetch user's IP address
+  //     const ipResponse = await fetch("https://api64.ipify.org?format=json");
+  //     const ipData = await ipResponse.json();
+  //     const userIP = ipData.ip;
+
+  //     // Fetch timezone based on user's IP when landing on page and no country selected
+  //     const response = await fetch(`http://worldtimeapi.org/api/ip/${userIP}`);
+
+  //     if (!response.ok) {
+  //       throw new Error(`HTTP error! Status: ${response.status}`);
+  //     }
+
+  //     const data = await response.json();
+  //     const regex = /T(\d{2}:\d{2}:\d{2})/;
+  //     const match = data.datetime.match(regex);
+  //     const extractedTime = match ? match[1] : "";
+
+  //     settimeZoneByIp(extractedTime);
+  //   } catch (error) {
+  //     console.error("Error fetching time by IP:", error.message);
+  //   }
+  // };
+
+  //////////////////////////////////////////-------COUNTRIES LIST--------/////////////////
 
   const fetchCountries = async () => {
     try {
@@ -70,8 +102,6 @@ function UserDetail() {
 
       const data = await response.json();
       setCountries(data);
-
-      // console.log(selectedCountry)
     } catch (error) {
       console.error("Error fetching countries:", error.message);
     }
@@ -96,14 +126,14 @@ function UserDetail() {
       const match = data.datetime.match(regex);
       const extractedTime = match ? match[1] : "";
 
-      setTime(extractedTime);
+      setSelectedCountryTime(extractedTime);
       // console.log(time)
     } catch (error) {
       console.error("Error fetching countries:", error.message);
     }
   };
 
-  //////////////////////////////////////////-------USER dETAILS--------/////////////
+  //////////////////////////////////////////-------USER dETAILS--------///////////////////
   const fetchUserDetails = async () => {
     try {
       const response = await fetch(
@@ -121,18 +151,15 @@ function UserDetail() {
       }
 
       const data = await response.json();
-      // console.log(data)
+
       setuserDetails(data);
-       // Fetch the initial time when user details are fetched
-    
-      // console.log(userdetails)
     } catch (error) {
       console.error("Error fetching user details:", error.message);
     }
   };
 
-   //////////////////////////////////////////-------USER POSTS--------/////////////
-   const fetchUserPosts = async () => {
+  //////////////////////////////////////////-------USER POSTS--------/////////////////////
+  const fetchUserPosts = async () => {
     try {
       const response = await fetch(
         `https://jsonplaceholder.typicode.com/posts?userId=${id}`,
@@ -149,51 +176,26 @@ function UserDetail() {
       }
 
       const data = await response.json();
-      // console.log(data)
+
       setUserPosts(data);
-      // console.log(userPosts)
     } catch (error) {
       console.error("Error fetching user posts:", error.message);
     }
   };
 
- 
-
- 
-
   const handleCountryClick = (country) => {
     setSelectedCountry(country);
     fetchTimeZone(country);
+
     startInterval(country);
   };
 
   const startInterval = (country) => {
-    console.log("called");
-    let id
-    if(time){
-       id = setInterval(() => {
-        fetchTimeZone(country);
-      }, 1000);
-    }else{
-       id = setInterval(() => {
-        fetchTimeZoneByIP(country);
-      }, 1000);
-    }
-    
+    const id = setInterval(() => {
+      fetchTimeZone(country);
+    }, 1000);
 
     setIntervalId(id);
-  };
-
-  const togglePause = () => {
-    setIsPaused((prevPaused) => {
-      if (!prevPaused) {
-        
-        clearInterval(intervalId); // Stop the interval if currently paused
-      } else {
-        startInterval(selectedCountry); // Start the interval if currently playing
-      }
-      return !prevPaused; // Toggle the paused state
-    });
   };
 
   useEffect(() => {
@@ -201,7 +203,6 @@ function UserDetail() {
       clearInterval(intervalId);
     };
   }, [intervalId]);
-
 
   const handlePostClick = (post) => {
     setSelectedPost(post);
@@ -212,46 +213,52 @@ function UserDetail() {
     setShowPopup(false);
   };
 
+  
+
   return (
     <div className="container">
       <div className="section">
-      <div className="row">
-        <div className="col-md-4 ">
-          <div className="back">
-            <Link to={"/"}>Back</Link>
+        <div className="row">
+          <div className="col-md-4 ">
+            <div className="back">
+              <Link to={"/"}>Back</Link>
+            </div>
           </div>
-        </div>
-        <div className="col-md-4"></div>
-        <div className="col-md-4 text-right rightItems">
-          <div className="dropdown">
-            <button
-              className="btn btn-secondary dropdown-toggle"
-              type="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              {selectedCountry || "Select country"}
-            </button>
-            <ul className="dropdown-menu">
-              {countries.map((country, index) => (
-                <li key={index} onClick={() => handleCountryClick(country)}>
-                  <p className="dropdown-item">{country}</p>
-                </li>
-              ))}
-            </ul>
+          <div className="col-md-4"></div>
+          <div className="col-md-4 text-right rightItems">
+            <div className="dropdown">
+              <button
+                className="btn btn-secondary dropdown-toggle"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                {selectedCountry || "Select country"}
+              </button>
+              <ul className="dropdown-menu">
+                {countries.map((country, index) => (
+                  <li key={index} onClick={() => handleCountryClick(country)}>
+                    <p className="dropdown-item">{country}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <span className="clock">
+              {selectedCountry
+                ? selectedCountryTime
+                : `${hour}:${minute}:${second}`}
+            </span>
+            <div className="buttons">
+              <button onClick={() => setIsActive(!isActive)} className="pause">
+                {isActive ? "Pause" : "Resume"}
+              </button>
+            </div>
           </div>
-
-         <span className="clock">{time ? time :timeZoneByIp}</span>
-
-          <button onClick={togglePause} className="pause">
-            {isPaused ? "Resume" : "Pause"}
-          </button>
         </div>
       </div>
-    </div>
-  
 
-{/****************************************************-----------USER DETAILS------------************ ********************************** */}
+      {/****************************************************-----------USER DETAILS------------************ ********************************** */}
       <div className="section sectionTwo">
         {userdetails && (
           <div className="card">
@@ -263,7 +270,7 @@ function UserDetail() {
                   {userdetails.company.catchPhrase}
                 </p>
               </div>
-  
+
               <div className="otherDetails">
                 <p>
                   Address:{" "}
@@ -290,7 +297,7 @@ function UserDetail() {
                     </span>
                   ))}
                 </p>
-  
+
                 <p>
                   Email:{userdetails.email}|Phone:{userdetails.phone}
                 </p>
@@ -299,8 +306,8 @@ function UserDetail() {
           </div>
         )}
       </div>
-  
-{/****************************************************-----------USER POSTS------------************ ********************************** */}
+
+      {/****************************************************-----------USER POSTS------------************ ********************************** */}
 
       <div className="section">
         <div className="row">
@@ -319,7 +326,6 @@ function UserDetail() {
       </div>
     </div>
   );
-  
 }
 
 export default UserDetail;

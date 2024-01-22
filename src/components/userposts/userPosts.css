@@ -77,6 +77,8 @@
     margin-bottom: 20px;
 }
 
+
+
 @media (min-width:300px) and (max-width:600px){
     .sectionOne{
         display: flex;
@@ -105,11 +107,6 @@
         display: flex;
         flex-direction: column;
     }
-    /* .rightItems{
-        display: flex;
-        flex-direction: row; 
-       
-    } */
     .pause{
         width: 100px;
     }
@@ -120,8 +117,4 @@
         display: flex;
         flex-direction: column;
     }
-}
-@media  (min-width:768px) and (max-width:1200px)  {
-   
-    
 }
