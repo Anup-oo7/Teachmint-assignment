@@ -92,7 +92,7 @@ function UserDetail() {
 
   const fetchCountries = async () => {
     try {
-      const response = await fetch("http://worldtimeapi.org/api/timezone", {
+      const response = await fetch("https://worldtimeapi.org/api/timezone", {
         method: "Get",
       });
 
@@ -111,7 +111,7 @@ function UserDetail() {
   const fetchTimeZone = async (selectedCountry) => {
     try {
       const response = await fetch(
-        `http://worldtimeapi.org/api/timezone/${selectedCountry}`,
+        `https://worldtimeapi.org/api/timezone/${selectedCountry}`,
         {
           method: "Get",
         }
